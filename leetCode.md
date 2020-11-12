@@ -80,7 +80,7 @@
 
 ```
 
->选中排序
+>2.选择排序
 
 ###2.1 算法步骤
 
@@ -98,6 +98,23 @@
 
 ```java
     int[] arr = {1, 3, 5123, 566, 123, 51};
+      /**
+         * 总共要经过 N-1 轮比较
+         */
+        for (int i = 0; i < arr.length; i++) {
+            int min = i;
+            for (int j = arr.length-1; j>0+i ; j--) {
+                if (arr[min] > arr[j]) {
+                    min = j;
+                }
+            }
+            int tmp = arr[i];
+            arr[i] = arr[min];
+            arr[min] = tmp;
+        }
+        Arrays.stream(arr).forEach(System.out::println);
+        //第一个的缺点。操作数组频繁导致效率低
+
         /**
          * 总共要经过 N-1 轮比较
          */
@@ -122,3 +139,110 @@
         Arrays.stream(arr).forEach(System.out::println);
 
 ```
+
+>3.插入排序
+
+###3.1 算法步骤
+
+* 将第一待排序序列第一个元素看做一个有序序列，把第二个元素到最后一个元素当成是未排序序列。
+* 从头到尾依次扫描未排序序列，将扫描到的每个元素插入有序序列的适当位置。(如果待插入的元素与有序序列的某个元素相等，则将插入元素插入到相等元素的后面。)
+
+###3.2 动画演示
+
+![插入排序.gif](images/插入排序.gif)
+
+<center>插入排序动画演示</center>
+
+###3.3 参考代码
+
+```java
+  int[] arr = {4, 3, 5123, 566, 123, 51};
+        /**
+         * 从下标为1的元素开始选择合适的位置插入，因为下标为0的只有一个元素，默认是有**序的
+         */
+        for (int i = 1; i < arr.length; i++) {
+             // 记录要插入的数据
+            int tmp = arr[i];
+             // 从已经排序的序列最右边的开始比较，找到比其小的数
+            int j = i;
+            while (j > 0 && arr[j] < arr[j - 1]) {
+                arr[j] = arr[j-1];
+                arr[j - 1] = tmp;
+                j--;
+            }
+        }
+        Arrays.stream(arr).forEach(System.out::println);
+
+        //第一个的缺点，只要后一个比前一个小，就插入。插入频繁导致效率低
+
+         // 从下标为1的元素开始选择合适的位置插入，因为下标为0的只有一个元素，默认是有序的
+        for (int i = 1; i < arr.length; i++) {
+
+            // 记录要插入的数据
+            int tmp = arr[i];
+
+            // 从已经排序的序列最右边的开始比较，找到比其小的数
+            int j = i;
+            while (j > 0 && tmp < arr[j - 1]) {
+                arr[j] = arr[j - 1];
+                j--;
+            }
+            // 存在比其小的数，插入
+            if (j != i) {
+                arr[j] = tmp;
+            }
+        }
+        Arrays.stream(arr).forEach(System.out::println);
+```
+
+>4.希尔排序
+
+###4.1 算法步骤
+
+* 选择一个增量序列t1,t2,....,tk,其中ti>tj,tk=1。
+* 按增量序列个数k，对序列进行k趟排序。
+* 每趟排序，根据对应的增量ti，将待排序列分割成若干长度为m的子序列，分别对各个表进行直接插入排序。仅增量因子为1时，整个序列作为一个表来处理，表示长度即为整个序列的长度。
+
+###4.2 动画演示
+
+![希尔排序.gif](images/希尔排序.gif)
+
+<center>希尔排序动画演示</center>
+
+```java
+  int gap = 1;
+        while (gap < arr.length) {
+            gap = gap*3 + 1;
+        }
+        while (gap > 0) {
+            for (int i = gap; i < arr.length; i++) {
+                int tmp = arr[i];
+                int j = i - gap;
+                while (j >= 0 && arr[j] > tmp) {
+                    arr[j + gap] = arr[j];
+                    j -= gap;
+                }
+                arr[j + gap] = tmp;
+            }
+            gap = (int) Math.floor(gap / 3);
+        }
+        Arrays.stream(arr).forEach(System.out::println);
+        //分组插入思想，数组越有序效率越高
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
