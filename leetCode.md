@@ -209,6 +209,8 @@
 
 <center>希尔排序动画演示</center>
 
+###4.3 参考代码
+
 ```java
   int gap = 1;
         while (gap < arr.length) {
@@ -229,6 +231,87 @@
         Arrays.stream(arr).forEach(System.out::println);
         //分组插入思想，数组越有序效率越高
 ```
+
+>5.归并排序
+
+###5.1 算法步骤
+
+* 申请空间，使其大小为两个已经排序序列之和，该空间用来存放合并后的序列
+* 设定两个指针，最初位置分别为两个已经排序序列的起始位置
+* 比较两个指针所指向的元素，选择相对小的元素放入到合并空间，并移动指针到下一位置
+* 重复步骤3直到某一指针达到序列列尾
+* 将另一序列剩下的所有元素直接复制到合并序列列尾
+
+
+###5.2 动画演示
+
+![归并排序.gif](images/归并排序.gif)
+
+<center>归并排序动画演示</center>
+
+###5.3 参考代码
+
+```java
+  public static void main(String[] args) {
+        int[] arr = {4, 3, 5123, 566, 123, 51};
+        if (arr.length < 2) {
+            return;
+        }
+        int middle = (int) Math.floor(arr.length / 2);
+        int[] left = Arrays.copyOfRange(arr, 0, middle);
+        int[] right = Arrays.copyOfRange(arr, middle, arr.length);
+        Arrays.sort(left);
+        Arrays.sort(right);
+        int[] result = merge(left, right);
+        Arrays.stream(result).forEach(System.out::println);
+    }
+
+    /**
+     * 两个有序数组
+     * @param left
+     * @param right
+     * @return
+     */
+    public static int[] merge(int[] left, int[] right) {
+        int[] result = new int[left.length + right.length];
+        int i = 0;
+        while (left.length > 0 && right.length > 0) {
+            if (left[0] <= right[0]) {
+                result[i++] = left[0];
+                left = Arrays.copyOfRange(left, 1, left.length);
+            } else {
+                result[i++] = right[0];
+                right = Arrays.copyOfRange(right, 1, right.length);
+            }
+        }
+        while (left.length > 0) {
+            result[i++] = left[0];
+            left = Arrays.copyOfRange(left, 1, left.length);
+        }
+        while (right.length > 0) {
+            result[i++] = right[0];
+            right = Arrays.copyOfRange(right, 1, right.length);
+        }
+        return result;
+    }
+```
+
+>6.快速排序
+
+###6.1 算法步骤
+
+* 从数列中挑出一个元素，称为`基准`(pivot)
+* 重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面(相同数可以到任一边)。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区(partition)操作
+* 递归地(recursive)把小于基准值元素的子列数和大于基准值元素的子数列排序
+
+###6.2 动画演示
+
+![快速排序.gif](images/快速排序.gif)
+
+<center>快速排序动画演示</center>
+
+###6.3 参考代码
+
 
 
 
