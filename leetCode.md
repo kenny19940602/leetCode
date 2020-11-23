@@ -391,7 +391,25 @@
 
 >7.堆排序
 
-###7.1 算法步骤
+###7.1 堆结构
+
+堆是具有以下性质的完全二叉树：
+* 每个节点的值都大于或等于其左右节点的值，称为大堆顶
+* 每个节点的值都小于或等于其左右孩子节点的值，称为小堆顶
+
+![大堆i顶.jfif](images/大堆i顶.jfif)
+
+![小堆顶.webp](images/小堆顶.webp)
+
+###7.2 堆排序
+
+堆排序(HeapSort)是指利用堆这种数据结构所设计的一种排序算法。堆积是一个近似完全二叉树的机构，并同时满足堆积的性质：即子节点的键值或索引总是小于(或者大于)它的父节点。堆排序可以说是一种利用堆的概念来排序的选择排序。分为两种方法：
+* 大堆顶：每个节点的值都大于或等于其子节点的值，在堆排序算法中用于升序排列；
+* 小堆顶：每个节点的值都小于或等于其子节点的值，在堆排序算法中用于降序排列；
+
+堆排序的平均时间复杂度未O(nlogn)
+
+###7.3 算法步骤
 
 * 创建一个堆H[0......n-1]。
 * 把堆首(最大值)和堆尾互换。
@@ -399,15 +417,296 @@
 * 重复步骤2，直到堆得尺寸为1。
 
 
-###7.2 动画演示
+###7.4 动画演示
 
 ![堆排序.gif](images/堆排序.gif)
 
 <center>堆排序动画演示</center>
 
+###7.5 参考代码
+
+```java
+ public static void main(String[] args) {
+        int[] arr = {4, 3, 5123, 51, 123, 1};
+        int length = arr.length;
+        buildMaxHeap(arr, length);
+        for (int i = length - 1; i > 0; i--) {
+            swap(arr, 0, i);
+            length--;
+            heapify(arr,0,length);
+        }
+        Arrays.stream(arr).forEach(System.out::println);
+    }
+
+    private static void buildMaxHeap(int[] arr, int length) {
+        for (int i = (int) Math.floor(length / 2); i >= 0; i--) {
+            heapify(arr, i, length);
+        }
+    }
+
+    private static void heapify(int[] arr, int i, int length) {
+        int left = 2*i+1;
+        int right = 2*i+2;
+        int largest = i;
+        if (left < length && arr[left] > arr[largest]) {
+            largest = left;
+        }
+        if (right < length && arr[right] > arr[largest]) {
+            largest = right;
+        }
+        if (largest != i) {
+            swap(arr, i, largest);
+            heapify(arr, largest, length);
+        }
+    }
+
+    private static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+```
+
+>8.计数排序
+
+**描述：**计数排序是一种非基于比较的排序算法，其空间复杂度和时间复杂度均为O(n+k),其中k是整数的范围。基于比较的排序算法时间复杂度最小是O(nlogn)的。该算法于1954年由Harold H. Seward提出。
+
+计数排序的核心在于将输入的数据值转化为键存储在额外开辟的数组空间中。作为一种线性时间复杂度的排序，计数排序要求输入的数据必须是有`确定范围的整数`
 
 
+### 8.1 算法步骤
 
+* 花O(n)的时间扫描一下整个序列A，获取最小值min和最大值max
+* 开辟一块新的空间创建新的数组B，长度为(max-min+1)
+* 数组B中index的元素记录的值是A中某个元素出现的次数
+* 最后输出目标整数序列，具体的逻辑是遍历数组B，输出相应元素以及对应的个数
+
+###8.2 动画演示
+
+![计数排序.gif](images/计数排序.gif)
+
+<center>计数排序动画演示</center>
+
+###8.3 参考代码
+
+```java
+ public static void main(String[] args) {
+        int[] arr = {4, 3, 5123, 51, 123, 1};
+        int maxValue = getMaxValue(arr);
+        countingSort(arr, maxValue);
+        Arrays.stream(arr).forEach(System.out::println);
+    }
+
+    /**
+     * 数组最大值越大越浪费得空间，感觉用于统计数字出现次数比较好用
+     * @param arr
+     * @param maxValue
+     */
+    private static void countingSort(int[] arr, int maxValue) {
+        int bucketLen = maxValue + 1;
+        int[] bucket = new int[bucketLen];
+
+        for (int value : arr) {
+            bucket[value]++;
+        }
+        int sortedIndex = 0;
+        for (int j = 0; j < bucketLen; j++) {
+            while (bucket[j] > 0) {
+                arr[sortedIndex++] = j;
+                bucket[j]--;
+            }
+        }
+
+    }
+
+    private static int getMaxValue(int[] arr) {
+        int maxValue = arr[0];
+        for (int value : arr) {
+            if (maxValue < value) {
+                maxValue = value;
+            }
+        }
+        return maxValue;
+    }
+```
+
+>9.桶排序
+
+**描述：**桶排序(Bucket sort)是一种基于计数的排序算法，工作的原理是将数据分到有限数量的桶子里，然后每个桶再分别排序(有可能再使用别的排序算法或是以递归方式继续使用桶排序进行排序)
+
+###9.1 算法步骤
+
+* 设置固定数量的空桶
+* 把数据放到对应的桶中
+* 对每个不为空的桶中数据进行排序
+* 拼接不为空的桶中数据，得到结果
+
+###9.2 动画演示
+
+![桶排序.gif](images/桶排序.gif)
+
+<center>桶排序动画演示</center>
+
+###9.3 参考代码
+
+```java
+public static void main(String[] args) {
+        int[] arr = {4, 3, 5123, 51, 123, 1};
+        bucketSort(arr, 5);
+        Arrays.stream(arr).forEach(System.out::println);
+    }
+
+    private static void bucketSort(int[] arr, int bucketSize) {
+        if (arr.length == 0) {
+            return;
+        }
+        int minValue = arr[0];
+        int maxValue = arr[0];
+        for (int value : arr) {
+            if (value < minValue) {
+                minValue = value;
+            } else if (value > maxValue) {
+                maxValue = value;
+            }
+        }
+        int bucketCount = (int) Math.floor((maxValue - minValue) / bucketSize) + 1;
+        int[][] buckets = new int[bucketCount][0];
+
+        /**
+         * 利用映射函数将数据分配到各个桶中
+         */
+        for (int i = 0; i < arr.length; i++) {
+            int index = (int) Math.floor((arr[i] - minValue) / bucketSize);
+            buckets[index] = arrAppend(buckets[index], arr[i]);
+        }
+
+        int arrIndex = 0;
+        for (int[] bucket : buckets) {
+            if (bucket.length <= 0) {
+                continue;
+            }
+            /**
+             * 插入排序
+             */
+            bucket = insertSort(bucket);
+            for (int value : bucket) {
+                arr[arrIndex++] = value;
+            }
+        }
+
+    }
+
+    private static int[] insertSort(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            int temp = arr[i];
+            int j = i;
+            while (j > 0 && temp < arr[j - 1]) {
+                arr[j] = arr[j - 1];
+                j--;
+            }
+            if (j != i) {
+                arr[j] = temp;
+            }
+        }
+        return arr;
+    }
+```
+
+>10.基数排序
+
+**描述:**基数排序(Radix Sort)是一种非比较型排序算法，其原理是将整数按位数切割成不同的数字，然后按每个位数分别比较。基数排序的发明可以追溯到1887年赫尔曼·何乐礼在打孔卡片制表机(Tabulation Machine)上的贡献。
+
+基数排序法会使用到桶(Bucket),顾名思义，通过将要比较的位(个位，十位，百位...),将要排序的元素分配至0~9个桶中，借以达到排序的作用，在某些时候，基数排序法的效率高于其它的比较性排序法。
+
+
+###10.1 算法步骤
+
+* 将所有待比较数值(正整数)统一为同样的数位长度，数位较短的数前面补零
+* 从最低位开始，依次进行一次排序
+* 从最低位排序一直到最高位排序完成以后，数列就变成一个有序序列
+* 
+
+###10.2 动画演示
+
+![基数排序.gif](images/基数排序.gif)
+
+<center>基数排序动画演示</center>
+
+###10.3 参考代码
+
+```java
+    public static void main(String[] args) {
+        int[] arr = {4, 3, 5123, 51, 123, 1};
+        int maxDigit = getMaxDigit(arr);
+        radixSort(arr, maxDigit);
+        Arrays.stream(arr).forEach(System.out::println);
+    }
+
+    private static void radixSort(int[] arr, int maxDigit) {
+        int mod = 10;
+        int dev = 1;
+
+        for (int i = 0; i < maxDigit; i++, dev *= 10, mod *= 10) {
+            //考虑复数的情况，这里扩展一倍队列数，其中[0-9]对应复数，[10-19]对应正数(bucket+10)
+            int[][] counter = new int[mod * 2][0];
+
+            for (int j = 0; j < arr.length; j++) {
+                int bucket = ((arr[j] % mod) / dev) + mod;
+                counter[bucket] = arrAppend(counter[bucket], arr[j]);
+            }
+            int pos = 0;
+            for (int[] bucket : counter) {
+                for (int value : bucket) {
+                    arr[pos++] = value;
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 自动扩容，保存数据
+     * @param bucket
+     * @param i
+     * @return
+     */
+    private static int[] arrAppend(int[] bucket, int i) {
+        bucket = Arrays.copyOf(bucket, bucket.length + 1);
+        bucket[bucket.length - 1] = i;
+        return bucket;
+    }
+    /**
+     * 获取最高位
+     * @param arr
+     * @return
+     */
+    private static int getMaxDigit(int[] arr) {
+        int maxValue = getMaxValue(arr);
+        return getNumLength(maxValue);
+
+    }
+
+    private static int getNumLength(int num) {
+        if (num == 0) {
+            return 1;
+        }
+        int length = 0;
+        for (int temp = num; temp != 0; temp /= 10) {
+            length++;
+        }
+        return length;
+    }
+
+    private static int getMaxValue(int[] arr) {
+        int maxValue = arr[0];
+        for (int value : arr) {
+            if (maxValue < value) {
+                maxValue = value;
+            }
+        }
+        return maxValue;
+    }
+```
 
 
 
